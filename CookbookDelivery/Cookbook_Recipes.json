@@ -1,0 +1,284 @@
+{
+  "name": "Cookbook Recipes",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -760,
+        -340
+      ],
+      "id": "10f710a9-7869-4642-af2b-129279f3a91e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Send me a random recipe from my cookbook",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that is an expert in looking through a cookbook, selecting a recipe and sending an email with a grocery list and instructions. Today is {{ $now.format('DDDD TTT') }}.\n\nWhen prompted you look through the cookbook, find a random recipe and then create the grocery list and have the instructions below.\n\nThe Subject should be the date and then say the recipe name.\n\nAn example output:\nGood day, ready to eat healty with me!?! *bicep_emoji*\n\nHere is this weeks recipe: (__ servings)\nChicken and marinade\n- 1340g boneless, skinless chicken thighs\n- 200g buffalo sauce\n- 30g soy sauce\n- 1 packet ranch seasoning\n- 40g honey\n\nCornstarch slurry\n- 3 Tbsp cornstarch\n- 3 Tbsp cold water\n\nBuffalo ranch sauce\n- 75g buffalo sauce\n- Handful of chopped chives or green onions\n- 200g 0% Greek yogurt\n- 75g light sour cream\n- Pinch of chopped dill (optional)\n\nRice\n- 240g rice\n- 560g bone broth\n- Salt + garlic powder for taste\n\nToppings and garnish\n- 120g mozzarella\n- 70g applewood smoked bacon bits\n- chives\n\nHere are the instructions:\n1. Place the chicken thighs in the slow cooker. Add Buffalo wing sauce, soy sauce, ranch seasoning, and\nhoney. *Buffalo “Wing” sauce generally contains added fat. If using a zero-fat Buffalo sauce, melt 45g (3\nTbsp) butter and add it to the mixture. Stir to evenly coat the chicken. Cover and cook on high for 3–4\nhours, or until the chicken is tender and can be easily shredded.\n\n2. Once cooked, shred with two forks in the slow cooker. In a small bowl, combine cornstarch with cold water\nto make a slurry, then add it to the slow cooker to thicken. To finish, mix in more buffalo wing sauce, 0%\nGreek yogurt, light sour cream, and optional chopped dill. Stir until smooth, then mix in mozzarella and\nbacon bits and stir.\n\n3. Combine rice and chicken bone broth in a pot, bring to a boil, reduce heat to low, cover, and simmer for\n20-25 minutes, or until the liquid is absorbed. Let sit covered for 5 minutes, season with garlic powder and\nsalt to taste, then fluff with a fork. Mix rice with cheesy buffalo ranch chicken. Garnish with chopped chives\nor green onions. Portion into 7 servings and enjoy.\n\n\nAvailable Tools:\nLook through cookcook: Use this tool to look through recipes, selecting one at random to use for the week.\n\nSend an email on Friday: Use this tool to send the email with a subject and a body if it is a Friday.\n\nSend an email on Sunday: Use this tool to send the email with a subject and a body if it is a Sunday.\n\nImportant Notes:\nMake sure to have the sauce as well and have the ingredients split into each part like the book does.\n\nOnly have the grocery list and the instructions, don't add ingredients list as well.\n\nAlways pass the full response to the tools so they have all the information they need.\n\nOnly send the email once\n\nIf you encounter an issue (e.g., invalid input, missing data, or tool failure), notify Skarphedinn immediately and provide details about the problem."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -460,
+        -200
+      ],
+      "id": "9ad09c35-ce36-4f15-9cdd-6a2efc7b618e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        20
+      ],
+      "id": "ad9531c8-796e-463e-ad8e-549e28406606",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        180
+      ],
+      "id": "5359584a-dfdc-4a19-abfd-e0c3d74aa0c1",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "database",
+        "toolDescription": "Use this vector store to get the cookbook so you can select a recipe",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "cookbook",
+          "mode": "list",
+          "cachedResultName": "cookbook"
+        },
+        "topK": 1000,
+        "includeDocumentMetadata": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        20
+      ],
+      "id": "dea639b9-dddc-422d-9033-d8b5e971986b",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ti5uqNRX8dW0BciY",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -780,
+        -140
+      ],
+      "id": "a565d0b8-65b7-4575-8a85-b673fe4d53b0",
+      "name": "Christian email"
+    },
+    {
+      "parameters": {
+        "sendTo": "christian.slee@gmail.com",
+        "subject": "={{ $fromAI(\"subject\", \"make a subject line for this message\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"message\", \"use the information to make add to the body\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        20
+      ],
+      "id": "fd4e130a-c2fa-4ee4-b8ce-21f2fcb38a08",
+      "name": "Send an email on Sunday",
+      "webhookId": "634bc9ae-7b74-451d-975d-fe4ad82d37be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XGCiGULgvPDJcPm8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "skarpi.isak@gmail.com",
+        "subject": "={{ $fromAI(\"subject\", \"make a subject line for this message\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"message\", \"use the information to make add to the body\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        20
+      ],
+      "id": "54b82d39-3ff3-4310-8ff5-4a9c9e3b9257",
+      "name": "Send an email on Friday",
+      "webhookId": "075263d6-985c-4317-9d45-b45226b4a412",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XGCiGULgvPDJcPm8",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Christian email": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an email on Sunday": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an email on Friday": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8014a196-02eb-4862-9662-5afd7c798a7b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "ZS0iW9nJlSB4wcmA",
+  "tags": []
+}
