@@ -1,0 +1,225 @@
+{
+  "name": "CIV VII Randomiser",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that randomises for game playage.\n\nWhen prompted you should have player names/name and then you give each player a Civ and a Leader using your tools.\n\nAvailable Tools:\nRandomize for CIVs: Here you get a list of nations and you use the random number picker to pick a nation for each player they obviously can't have the same.\n\nRandomize for Leaders: Here you get a list of leaders and you have to pick one fully randomly and you use the random number picker to pick a leader for each player they obviously can't have the same.\n\nrandom_number_picker: Send to this tool how many options you have in your list and it returns a random number. \n\nImportant Notes:\nNever give players the same as other players or themselves.\n\nAlways give both Civ and a leader to each player!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -240,
+        -240
+      ],
+      "id": "c19df14d-5dcf-4a03-8a3d-d947e55ebd45",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -340,
+        -40
+      ],
+      "id": "e0849297-1055-40b9-9059-6ddf1a444c95",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU",
+          "mode": "list",
+          "cachedResultName": "Games randomiser",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1785184506,
+          "mode": "list",
+          "cachedResultName": "Leaders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit#gid=1785184506"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        80,
+        -40
+      ],
+      "id": "229a6ae7-9d62-4752-8a61-e1d824ef1a45",
+      "name": "Randomize for Leaders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU",
+          "mode": "list",
+          "cachedResultName": "Games randomiser",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "CIV_VII",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -60,
+        -40
+      ],
+      "id": "22290c00-25ee-4e72-bbd0-89eb71771d19",
+      "name": "Randomize for CIVs",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -240
+      ],
+      "id": "40689d2c-c56a-4bc9-b90a-5969d887af74",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Picks a random number between 1 and the given max",
+        "url": "https://skarphedinns.app.n8n.cloud/webhook/random-number",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "options"
+            }
+          ]
+        },
+        "optimizeResponse": true,
+        "dataField": "randomNumber"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        -40
+      ],
+      "id": "dcd46389-7187-4754-abc8-7d7c60e4bf5f",
+      "name": "random_number_picker"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Randomize for Leaders": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Randomize for CIVs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "random_number_picker": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a91cb58a-0e38-4f35-9b05-ebefbc6e9972",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "ACbJj7BuYkEX3MWk",
+  "tags": []
+}

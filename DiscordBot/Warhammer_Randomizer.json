@@ -1,0 +1,146 @@
+{
+  "name": "Warhammer Randomizer",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that randomises for game playage.\n\nWhen prompted you should have player names and how many different options players should have and then you return for all players as many factions as the chosen options.\n\nAvailable Tools:\nRandomize for Warhammer: This on returns a list of factions and you pick fully at random for all the players and try to not give the same player multiple from the same race.\n\nImportant Notes:\nNever give players the same as other players or themselves.\n\nMake sure that every pick is random."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        0
+      ],
+      "id": "d40e0a15-1217-40f0-83a7-a12451c54503",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        200
+      ],
+      "id": "7803da4c-1886-4470-927a-a9a8a7b533c3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "19dd8550-3933-4f5b-a66d-a05253101f7c",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU",
+          "mode": "list",
+          "cachedResultName": "Games randomiser",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1504043165,
+          "mode": "list",
+          "cachedResultName": "Warhammer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cOdvHxtAJ7t_76qinOVkL9_ZTDn7_i7Vtd1JiTlE_cU/edit#gid=1504043165"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        200
+      ],
+      "id": "59db98cd-f5a8-4fe8-9ef4-aa7f64017ddc",
+      "name": "Randomize for Warhammer",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Randomize for Warhammer": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46732c8d-82f0-453a-9f7c-e604ef4a1a7e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "scUmM1xGAzjAR87V",
+  "tags": []
+}

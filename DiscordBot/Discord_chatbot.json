@@ -1,0 +1,225 @@
+{
+  "name": "Discord chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/discord-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "53f20eac-b94d-49c5-a39a-e5d2e78c82b8",
+      "name": "Webhook",
+      "webhookId": "24272c87-05e5-4441-b1c2-f98b9b7744d7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that can answer questions from the internet and randomise for a game.\n\nTools:\nWikipedia: Use this on to answer questions people have.\n\nRandomise game situation: Use this tool to generate a random game setup. Make sure to send the info like this: Players seperated by commas then dot and then the game then finally another dot and the amount of options if you have the amount of options.\n\nImportant notes:\nReturn a response saying what info you are missing if you don't have the players or the game.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "0907b4f6-68fb-4c21-8d9d-34a532320bfa",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        120,
+        180
+      ],
+      "id": "f60bff46-bda7-4fe6-8c3e-251e254cd3db",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        420,
+        180
+      ],
+      "id": "d5ff05c4-82f4-4ab1-aa0f-d3b6daa4dd1f",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n   \"response\": \"{{$json.response}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "b27f6498-2026-43ba-969b-53f56e27d623",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const responseText = items[0].json.output || \"No response available\";\n\nconst safeResponse = responseText.replace(/\"/g, '\\\\\"').replace(/\\n/g, '\\\\n');;\n// Ensure response is JSON-safe\nreturn [{\n    response: safeResponse\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        0
+      ],
+      "id": "71b38843-b06a-4050-87cb-7afc49802e6c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "name": "game_randomiser",
+        "description": "Call this tool to generate a random game setup.\nMake sure to have a set of player names (can be one) and the game.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QGRRivkdjVKSOl6l",
+          "mode": "list",
+          "cachedResultName": "Game Randomiser"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        540,
+        180
+      ],
+      "id": "cfeca0bb-ab92-499d-a242-aeea2fa8dcb9",
+      "name": "Randomise Game Situation"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Randomise Game Situation": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "11e5fbab-1ec2-41ce-b830-a7a096ee0bd7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "Erwj7koCeYMZQqgb",
+  "tags": []
+}

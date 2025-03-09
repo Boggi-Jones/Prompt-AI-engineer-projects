@@ -1,0 +1,85 @@
+{
+  "name": "Random Number Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/random-number",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d373a86c-5ccf-4e77-af96-5f3571de54bd",
+      "name": "Webhook",
+      "webhookId": "ee41e50d-ed36-403d-a4a5-4b3ebd7ec814"
+    },
+    {
+      "parameters": {
+        "jsCode": "const max = parseInt($input.first().json.query.options) || 10; // Default to 10 if not provided\nconst randomNumber = Math.floor(Math.random() * max) + 1;\n\nreturn [{\n    random: randomNumber\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ca97d466-8994-4f11-94b0-804429560546",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"randomNumber\": \"{{$json.random}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "db6d7850-febd-4e16-9b0a-ba73bbee7ac7",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6b95e1fc-7d2f-45bc-8a10-289983cb68ed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "hqqqXKF86kU8gA5U",
+  "tags": []
+}

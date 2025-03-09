@@ -1,0 +1,236 @@
+{
+  "name": "Game Randomiser",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -140
+      ],
+      "id": "e2aa1cb8-88c9-49c3-8d89-118eb7302cc5",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that randomises for game playage.\n\nWhen prompted you should have player names, what game it is and how many different options players should have. If you don´t have the amount of options just assume it is only 1\n\nAvailable Tools:\nRandomize for CIV VII: Use this tool to get a random configuration for Civ. But only if you have player names. Make sure to send the info like this: Players seperated by commas then dot and then the game then finally another dot and the amount of options if you have the amount of options.\n\nRandomize for Warhammer: Use this tool to get a random configuration for Warhammer. But only if you have player names. Make sure to send the info like this: Players seperated by commas then dot and then the game then finally another dot and the amount of options if you have the amount of options.\n\nTFT Randomizer: Use this tool to get random number for a tft game. You need to call it multiple time to get for all players.\n\nImportant Notes:\nNever give players the same as other players or themselves.\n\nMake sure that every pick is random."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -140,
+        -140
+      ],
+      "id": "f2b84809-8ae0-497c-bb2e-6a0502a0086c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        60
+      ],
+      "id": "1e651374-6bef-4ccc-8ba9-e677b98f52f0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "civ_randomiser",
+        "description": "Call this tool to randomise for a civ game",
+        "workflowId": {
+          "__rl": true,
+          "value": "ACbJj7BuYkEX3MWk",
+          "mode": "list",
+          "cachedResultName": "CIV VII Randomiser"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        20,
+        80
+      ],
+      "id": "e9f41ead-c2c8-46b3-a009-1564031eca0d",
+      "name": "Randomize Civ"
+    },
+    {
+      "parameters": {
+        "name": "warhammer_randomiser",
+        "description": "Call this tool to randomise for a warhammer game",
+        "workflowId": {
+          "__rl": true,
+          "value": "scUmM1xGAzjAR87V",
+          "mode": "list",
+          "cachedResultName": "Warhammer Randomizer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        220,
+        80
+      ],
+      "id": "2f5dc0eb-625c-460b-a30f-5c83cd979f95",
+      "name": "Warhammer Randomizer"
+    },
+    {
+      "parameters": {
+        "name": "random_number",
+        "description": "Call this tool to get a random number, for example for TFT.",
+        "jsCode": "// Generate a random number between 1 and 30\nconst randomNumber = Math.floor(Math.random() * 30) + 1;\n\n// Return the response as a string\nreturn randomNumber.toString();\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        80
+      ],
+      "id": "774a08ef-2034-472f-9bed-c4d54aaf4541",
+      "name": "TFT generator"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Randomize Civ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Warhammer Randomizer": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TFT generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "79c66491-d085-4ea0-819e-e7427c2fd63a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "QGRRivkdjVKSOl6l",
+  "tags": []
+}
