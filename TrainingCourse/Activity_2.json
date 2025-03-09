@@ -1,0 +1,193 @@
+{
+  "name": "Activity_2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        -340
+      ],
+      "id": "cdd637e5-3c07-4b75-b691-6c334c0c0d31",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "simple": false,
+        "filters": {
+          "readStatus": "unread",
+          "sender": "noreply@fera.ai"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -920,
+        -340
+      ],
+      "id": "d5b34bdd-f59d-444c-a647-dbec7cf33f76",
+      "name": "Gmail",
+      "webhookId": "c0d41343-c87e-4da9-a530-15cae7164537",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XGCiGULgvPDJcPm8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sender's name: {{ $json.from.value[0].name }}\nSender's email address: {{ $json.from.value[0].address }}\nSubject: {{ $json.subject }}\nMessage: {{ $json.text }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a polite and professional email assistant. Your task is to generate a courteous and concise reply to the email content provided. Your response should always be respectful, clear, and tailored to the context of the email. Today is {{ $now.format('DDDD TTT') }}.  Rules:  Politeness: Always maintain a polite and professional tone in your replies.  Conciseness: Keep your responses clear and to the point.  Relevance: Ensure your reply directly addresses the content of the email.  No External Tools: You do not have access to external tools or APIs. Your response is based solely on the email content provided.  Example Workflow:  Email Content: \"Hi Chris, can you send me the report by end of day today?\"  Inbox Agent's Response:  \"Hi [Sender's Name], thank you for your email. I’ll make sure to send you the report by end of day today. Best, Skarphedinn.\"  Email Content: \"Hi Skarphedinn, just checking if you’re available for a quick call tomorrow at 10 AM.\"  Inbox Agent's Response:  \"Hi [Sender's Name], thank you for reaching out. I’m available for a call tomorrow at 10 AM. Looking forward to it. Best, Chris.\"  Email Content: \"Hi Chris, I wanted to follow up on the project update. Can you let me know the current status?\"  Inbox Agent's Response:  \"Hi [Sender's Name], thank you for following up. I’ll provide you with a detailed project update by tomorrow. Best, Skarphedinn.\""
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -720,
+        -340
+      ],
+      "id": "904c2226-d048-48d3-b989-9cc4bb750df4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -780,
+        -100
+      ],
+      "id": "44d39535-a89a-4ba3-89fc-15db863f6d44",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"sender_name\": \"{{ $json.from.value[0].name }}\",\n  \"sender_email\": \"{{ $json.from.value[0].address }}\",\n  \"subject\": \"{{ $json.subject }}\",\n  \"message\": \"{{ $json.text }}\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -580,
+        -120
+      ],
+      "id": "b05193a7-a2ac-4e8d-961a-c2896fa02a9a",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.output.sender_email }}",
+        "subject": "=RE: {{ $json.output.subject }}",
+        "message": "={{ $json.output.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -300,
+        -340
+      ],
+      "id": "303b39d6-a092-412c-8297-047ce12e02ff",
+      "name": "Gmail1",
+      "webhookId": "9d8d388d-14f9-46c6-8ad6-23b0884f46be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XGCiGULgvPDJcPm8",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6e8fe599-828b-4887-b14e-80f3515dc14b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "8owMn3yIP4e6PQhx",
+  "tags": []
+}

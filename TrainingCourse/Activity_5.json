@@ -1,0 +1,442 @@
+{
+  "name": "Activity_5",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        -180
+      ],
+      "id": "b1d6fb16-92dd-4b83-ab06-2585aea7a890",
+      "name": "When chat message received",
+      "webhookId": "7532e3c5-ce44-45be-9861-876cfc37363d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful assistant that is an expert in time and task management. Today is {{ $now.format('DDDD TTT') }}.\n\nTask Structure:\nTasks are managed in a structured format with the following columns:\nTaskId: The unique identifier for the task (key to the row).\nTaskName: The name or description of the task.\nStatus: The current status of the task.\nDueDate: The due date for the task.\nNotes: Additional notes or details about the task.\n\nStatus Rules:\nThe Status column can only have one of the following values:\n\"Not started\"\n\"In progress\"\n\"Blocked\"\n\"Completed\"\n\nThe case of the status must match exactly (e.g., \"In progress\" is valid, but \"in progress\" is not).\n\nAvailable Tools:\nGet Tasks: Use this tool to retrieve all tasks. Always remember the TaskId for each task.\n\nGet One Task: Use this tool to retrieve a specific task by providing its TaskId. Always remember the TaskId for the task.\n\nUpdate a Task: Use this tool to update a task. You must provide all columns (TaskId, TaskName, Status, DueDate, and Notes) as input.\n\nAdd New Task: Use this tool to add a new task to the list. If you receive a query that is not a request for task information, consider adding it as a new task. If adding multiple tasks, submit them one at a time.\n\nImportant Notes:\nAlways pass the full response to the tools so they have all the information they need.\n\nIf you encounter an issue (e.g., invalid input, missing data, or tool failure), notify Skarphedinn immediately and provide details about the problem.\n\nIf you notice overdue tasks, conflicting due dates, or other potential issues, bring them to Skarphedinn's attention."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -40,
+        -180
+      ],
+      "id": "edd533c7-952b-44bf-a891-da30e6cb7149",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "0cb60fa0-abc0-4d03-9911-cbf46492b927",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ic1Ub2BxvmM8z98T",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -60,
+        20
+      ],
+      "id": "09a1f3c9-f45d-4fc9-b97f-b0254a358c26",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "IrCWGn6RW7Mx2QV6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        100,
+        20
+      ],
+      "id": "224dc81e-a6c9-449e-b55b-2970f7fe0150",
+      "name": "Get Tasks",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool will get one task by its TaskId and will return the entire row",
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "TaskId",
+              "lookupValue": "={{ $fromAI('TaskId') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        200,
+        20
+      ],
+      "id": "fe75a55d-76ae-494a-a114-8c5240899210",
+      "name": "Get one task",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Update a task of a given TaskId",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "TaskId"
+          ],
+          "schema": [
+            {
+              "id": "TaskId",
+              "displayName": "TaskId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TaskName",
+              "displayName": "TaskName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DueDate",
+              "displayName": "DueDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        300,
+        20
+      ],
+      "id": "9d7472a4-12e7-443d-b889-024831ddac94",
+      "name": "Update Task",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=This tool allows you to add one new task to the spreadsheet. TaskId must be unique. To make a new TaskId use {{ $execution.id.base64Encode() }} and unless told otherwise, set the status as \"Not started\"",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "TaskId": "={{ $fromAI('TaskId') }}",
+            "TaskName": "={{ $fromAI('TaskName') }}",
+            "DueDate": "={{ $fromAI('DueDate') }}",
+            "Notes": "={{ $fromAI('Notes') }}",
+            "Status": "={{ $fromAI('Status') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "TaskId",
+              "displayName": "TaskId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TaskName",
+              "displayName": "TaskName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DueDate",
+              "displayName": "DueDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        420,
+        20
+      ],
+      "id": "5ae69625-b214-48f2-9dfe-ec112daedf60",
+      "name": "Add a task",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get one task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fd3fd95b-8187-4fa5-afdf-2aa06b6e0c66",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "m0cHoORuakgkOwXH",
+  "tags": []
+}

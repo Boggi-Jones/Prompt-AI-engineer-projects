@@ -1,0 +1,412 @@
+{
+  "name": "Activity_1",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        760,
+        -400
+      ],
+      "id": "93873d80-992e-4f57-82e3-88bfe7387971",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        980,
+        -400
+      ],
+      "id": "6d1189d9-f7a5-470e-b125-540d03baf17f",
+      "name": "Get tasks",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77c68f91-c9c5-4c1a-bd38-1f97cef855b2",
+              "name": "Status",
+              "value": "=In Progress",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        -400
+      ],
+      "id": "d967bd32-8c77-4da4-b5a7-66bf17b02170",
+      "name": "Change the status"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "TaskId",
+              "displayName": "TaskId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TaskName",
+              "displayName": "TaskName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DueDate",
+              "displayName": "DueDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1420,
+        -400
+      ],
+      "id": "0e3861b6-35fb-43f4-8e58-b9a2ecef1360",
+      "name": "Update a row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78ec763a-72ba-4973-8f7d-baeb46ceca52",
+              "name": "TaskId",
+              "value": "Task002",
+              "type": "string"
+            },
+            {
+              "id": "b8965505-a823-4e8a-837a-e035957344d3",
+              "name": "TaskName",
+              "value": "Get through all the activities",
+              "type": "string"
+            },
+            {
+              "id": "6f207b66-c15d-46bb-ac70-d72b6246eac5",
+              "name": "DueDate",
+              "value": "2025-01-30",
+              "type": "string"
+            },
+            {
+              "id": "649485b2-bdea-4814-8b3d-60fc9c976fc7",
+              "name": "Status",
+              "value": "Not started",
+              "type": "string"
+            },
+            {
+              "id": "001a6b30-36d1-4a62-8343-db07b6f042ca",
+              "name": "Notes",
+              "value": "Nothing of note",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        -120
+      ],
+      "id": "d478d5e8-99bd-4c2b-8dd0-7ac44cf95822",
+      "name": "New Task"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q",
+          "mode": "list",
+          "cachedResultName": "Activity 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BdMIb7PKTjQc5wBajO08GxniR9y7WDo1anMroeSZp-Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "TaskId": "={{ $json.TaskId }}",
+            "TaskName": "={{ $json.TaskName }}",
+            "DueDate": "={{ $json.DueDate }}",
+            "Status": "={{ $json.Status }}",
+            "Notes": "={{ $json.Notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "TaskId",
+              "displayName": "TaskId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TaskName",
+              "displayName": "TaskName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DueDate",
+              "displayName": "DueDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1260,
+        -120
+      ],
+      "id": "62e5ae55-fda2-4e97-9b48-20314ae448fb",
+      "name": "Append a row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jTsvTtbQk3jCB3Pc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93d1ed58-eeb6-4cbf-8ef7-8e97ab3f9e45",
+              "name": "TaskId",
+              "value": "Task003",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1480,
+        -120
+      ],
+      "id": "db172a44-a8d0-4018-892e-7231f2187175",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get tasks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "New Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get tasks": {
+      "main": [
+        [
+          {
+            "node": "Change the status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Change the status": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Task": {
+      "main": [
+        [
+          {
+            "node": "Append a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c3a16676-578c-4832-a740-15f00b22f9dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69747acae84976d25ebd659310b7debd66bef40347f13a2ce9c0b7de23556251"
+  },
+  "id": "IrKCjqpNm0IFFBYf",
+  "tags": []
+}
